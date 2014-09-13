@@ -28,9 +28,3 @@ def query_word(word)
     puts json['basic']['uk-phonetic']
     puts json['basic']['explains']
 end
-# loop do
-#     word = gets
-#     p word
-# end
-
-query_word('hello')

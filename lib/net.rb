@@ -28,7 +28,7 @@ def query_word(word)
     result = (
         if basic = json['basic']
             {   
-                word: word, 
+                spell: word, 
                 us_phonetic: basic['us-phonetic'],
                 uk_phonetic: basic['uk-phonetic'],
                 explains: basic['explains'][0]
@@ -37,5 +37,4 @@ def query_word(word)
             nil
         end
     )
-
 end

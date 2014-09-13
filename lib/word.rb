@@ -1,4 +1,10 @@
 class Word < ActiveRecord::Base
-  I18n.enforce_available_locales = false
-  validates_uniqueness_of :word
+  validates_uniqueness_of :spell
+  belongs_to :category
+  def show
+    "[#{spell}] @#{category.name}\n"\
+    "\tus_phonetic:  #{us_phonetic},\n"\
+    "\tuk_phonetic:  #{uk_phonetic},\n"\
+    "\texplains:     #{explains}"
+  end
 end
