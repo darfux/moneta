@@ -11,6 +11,7 @@ end
 def default_category
   Category.find_by(name: 'Default')
 end
+
 def record_word
   puts "====Word Record(-e to return)===="
   loop do
