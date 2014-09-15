@@ -1,33 +1,59 @@
-require './lib/db_connect'
-require './lib/migrate'
-require './lib/word'
-require './lib/category'
-require './lib/net'
+require 'active_record'
+require 'pry'
+Dir["./lib/*.rb"].each {|file| require file }
+
 unless Word.table_exists?
   gen_db
-  Category.create(name: 'Default', description: 'The default category')
+  Tag.create(name: 'Default', description: 'The default tag')
 end
 
-def default_category
-  Category.find_by(name: 'Default')
+def single_get(tip)
+  print tip
+  word = gets
+  word.chomp.chomp
 end
 
-def record_word
+def default_tag
+  Tag.find_by(name: 'Default')
+end
+
+def handle_record_word
   puts "====Word Record(-e to return)===="
   loop do
-    print "Enter the new word:"
-    word = gets
-    word = word.chomp.chomp
+    word = single_get("Enter new word:")
     break if word=='-e'
-    result = query_word word
-    if result
-      w = Word.new result.merge(category_id: default_category.id, level: 0)
-      if w.save
-        puts "\tRecord successfully!"
-      else
-        puts "\t#{w.errors.full_messages}"
-      end
+    case r=record_word(word)
+    when true
+      puts "Record successfully"
+    when -1
+      puts "Query failed"
+    else
+      puts r.full_messages
     end
+  end
+end
+
+def hanle_add_tag
+  tag = Tag.new(name: single_get("Enter new tag:"))
+  if tag.save
+    puts "Tag added"
+  else
+    puts tag.errors.full_messages
+  end
+end
+
+
+def record_word(word)
+  result = query_word word
+  if result
+    w = Word.new result.merge(level: 0)
+      if w.save
+        return true
+      else
+        return w.errors
+      end
+  else
+    return -1
   end
 end
 
@@ -58,16 +84,20 @@ loop do
   command = gets
   case command.chomp.chomp
   when 'r'
-    record_word
+    handle_record_word
   when 'import'
     import_words
   when 'l'
     list_words
   when 'h'
     list_help
+  when 'at'
+    hanle_add_tag
   when 'q'
   when 'e'
     exit
+  when 'irb'
+    binding.pry
   end  
 end
 
